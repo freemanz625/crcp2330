@@ -43,26 +43,31 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
-   Not16(in=x, out=notx);
+   Not16(in=x, out=notx);                                                                           //Find the bitwise not of X and Y
    Not16(in=y, out=noty);
 
 
-   Mux4Way16(a=x, b=notx, c[0..15]=false, d[0..15]=true, sel[0] = nx, sel[1] = zx, out=modx);
+
+   Mux4Way16(a=x, b=notx, c[0..15]=false, d[0..15]=true, sel[0] = nx, sel[1] = zx, out=modx);       //Decide between original X and Y, bitwise not versions, or zeros
    Mux4Way16(a=y, b=noty, c[0..15]=false, d[0..15]=true, sel[0] = ny, sel[1] = zy, out=mody);
 
 
-   Add16(a=modx, b=mody, out=added);
+
+   Add16(a=modx, b=mody, out=added);                                                                //Perform both X+Y and X&Y
    And16(a=modx, b=mody, out=anded);
 
 
-   Mux16(a=anded, b=added, sel=f, out=tempout);
+
+   Mux16(a=anded, b=added, sel=f, out=tempout);                                                     //Assign add or and to output, calculate bitwise not of output
    Not16(in=tempout, out=ntempout);
 
 
-   Mux16(a=tempout, b=ntempout, sel=no, out=out, out[15]=ng, out[0..7]=least, out[8..15]=great);
+
+   Mux16(a=tempout, b=ntempout, sel=no, out=out, out[15]=ng, out[0..7]=least, out[8..15]=great);    //Assign output and ng, and slice it for analysis for determine zr
 
 
-   Or8Way(in=least, out=oleast);
+
+   Or8Way(in=least, out=oleast);                                                                    //Determine zr
    Or8Way(in=great, out=ogreat);
    Or(a=oleast, b=ogreat, out=nzr);
    Not(in=nzr, out=zr);
