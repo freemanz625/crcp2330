@@ -5,7 +5,8 @@
     <title>Assembler</title>
     <meta name=viewport content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
 
     <link rel="stylesheet" href="styles.css">
 
@@ -14,9 +15,12 @@
 </head>
 
 <body>
-	<textarea>
-	
-	</textarea>
+    <h1 class="display-3 ml-1">Assemble your code</h1>
+    <form class="ml-2 d-inline flex-column">
+        <textarea required class="w-25 mt-1" style="height:50vh;" id="input"></textarea>
+    </form>
+    <button class="btn btn-secondary text-white col-md-1 mt-3" onclick="assemble()">Assemble!</button>
+    <textarea disabled class="w-25 mt-1 d-inline" style="height:50vh;" id="output"></textarea>
 </body>
 
 </html>
