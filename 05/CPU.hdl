@@ -41,7 +41,7 @@ CHIP CPU {
     PARTS:
     // Put your code here:
 
-    PC(in=pcint, load=false, inc=true, reset=reset, out=pcint);
+    PC(in=A, load=JUMP, inc=true, reset=reset, out=pcint, out[0..14]=pc);
 
     Not(in=instruction[15], out=Amode);
     Or(a=Amode, b=instruction[5], out=loadA);
@@ -74,9 +74,10 @@ CHIP CPU {
     Mux(a=jle, b=jmp, sel=instruction[0], out=j3);
     Mux(a=j0, b=j1, sel=instruction[1], out=j4);
     Mux(a=j2, b=j3, sel=instruction[1], out=j5);
-    Mux(a=j4, b=j5, sel=instruction[2], out=JUMP);
+    Mux(a=j4, b=j5, sel=instruction[2], out=j6);
+    And(a=instruction[15], b=j6, out=JUMP);
 
-    Mux16(a=pcint, b=A, sel=JUMP, out[0..14]=pc);
+    //Mux16(a=pcint, b=A, sel=JUMP, out=pcjump);
 
 
 }
