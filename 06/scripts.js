@@ -12,6 +12,7 @@ function assemble() {
     var jdict = {
         '': '000', 'JGT': '001', 'JEQ': '010', 'JGE': '011', 'JLT': '100', 'JNE': '101', 'JLE': '110', 'JMP': '111'
     }
+    var reg = new RegExp('^(([ADM]+=(([-!]?[01ADM])|([ADM][-+|&][ADM1])))|([0ADM];J(GT|EQ|GE|LT|NE|LE|MP)))$');
 
     input = document.getElementById('input').value;
 
@@ -32,47 +33,57 @@ function assemble() {
         } else if (element[0] == '(') {
             //console.log(element.slice(1, element.length - 1));
         } else {
-            if (element.includes(';')) {
-                leftside = element.split(';')[0];
-                rightside = element.split(';')[1];
-                if (leftside.includes('M')) {
-                    cval = a1dict[leftside];
+            if (reg.test(element)) {
+                if (element.includes(';')) {
+                    leftside = element.split(';')[0];
+                    rightside = element.split(';')[1];
+                    if (leftside.includes('M')) {
+                        cval = a1dict[leftside];
+                    } else {
+                        binary[3] = 0;
+                        cval = a0dict[leftside];
+                    }
+                    for (i = 0; i < 6; i++)
+                        binary[i + 4] = cval[i];
+                    jval = jdict[rightside];
+                    for (i = 0; i < 3; i++) {
+                        binary[i + 10] = 0;
+                        binary[i + 13] = jval[i];
+                    }
+                } else if (element.includes('=')) {
+                    leftside = element.split('=')[0];
+                    rightside = element.split('=')[1];
+                    if (rightside.includes('M')) {
+                        cval = a1dict[rightside];
+                    } else {
+                        binary[3] = 0;
+                        cval = a0dict[rightside];
+                    }
+                    for (i = 0; i < 6; i++)
+                        binary[i + 4] = cval[i];
+                    if (!leftside.includes('A')) {
+                        binary[10] = '0';
+                    }
+                    if (!leftside.includes('D')) {
+                        binary[11] = '0';
+                    }
+                    if (!leftside.includes('M')) {
+                        binary[12] = '0';
+                    }
                 } else {
-                    binary[3] = 0;
-                    cval = a0dict[leftside];
-                }
-                for (i = 0; i < 6; i++)
-                    binary[i + 4] = cval[i];
-                jval = jdict[rightside];
-                for (i = 0; i < 3; i++) {
-                    binary[i + 10] = 0;
-                    binary[i + 13] = jval[i];
+                    binary = ['Inva', 'lid!'];
                 }
             } else {
-                leftside = element.split('=')[0];
-                rightside = element.split('=')[1];
-                if (rightside.includes('M')) {
-                    cval = a1dict[rightside];
-                } else {
-                    binary[3] = 0;
-                    cval = a0dict[rightside];
-                }
-                for (i = 0; i < 6; i++)
-                    binary[i + 4] = cval[i];
-                if (!leftside.includes('A')) {
-                    binary[10] = '0';
-                }
-                if (!leftside.includes('D')) {
-                    binary[11] = '0';
-                }
-                if (!leftside.includes('M')) {
-                    binary[12] = '0';
-                }
+                binary = ['Inva', 'lid!'];
             }
         }
         output.push(binary.join(''));
     });
 
-    document.getElementById('output').value = output.join('\n');
+    if (output.includes('Invalid!')) {
+        document.getElementById('output').value = 'Invalid line ' + output.indexOf('Invalid!') + ':\n' + nospace[output.indexOf('Invalid!')];
+    } else {
+        document.getElementById('output').value = output.join('\n');
+    }
 
 }
