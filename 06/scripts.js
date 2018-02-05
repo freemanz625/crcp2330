@@ -12,7 +12,14 @@ function assemble() {
     var jdict = {
         '': '000', 'JGT': '001', 'JEQ': '010', 'JGE': '011', 'JLT': '100', 'JNE': '101', 'JLE': '110', 'JMP': '111'
     }
-    var variables = {};
+    var variables = new Map();
+    variables.set('SP',0);
+    variables.set('LCL',1);
+    variables.set('ARG',2);
+    variables.set('THIS',3);
+    variables.set('THAT',4);
+    variables.set('SCREEN',16384);
+    variables.set('KBD',24576);
     var regC = new RegExp('^(([ADM]+=(([-!]?[01ADM])|([ADM][-+|&][ADM1])))|([0ADM];J(GT|EQ|GE|LT|NE|LE|MP)))$');
     var regA = new RegExp('^\\d+$', 'm');
     var regR = new RegExp('^R\\d+$')
@@ -28,6 +35,21 @@ function assemble() {
         nospace.push(temp);
     });
 
+    var ROM = 0;
+
+    nospace.forEach(element => {
+        
+        if (element[0] == '('){
+            console.log(element.slice(1, element.length - 1), ROM);
+            variables.set(element.slice(1, element.length - 1),ROM);
+        } else {
+            ROM++;
+        }
+    });
+
+    // var x= variables.entries;
+    // console.log(x);
+
     nospace.forEach(element => {
         binary = Array(13).fill(1);
         binary = binary.concat([0, 0, 0]);
@@ -41,10 +63,18 @@ function assemble() {
                     binarytarget = parseInt(rightside.slice(1, rightside.length)).toString(2);
                     binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
                 } else {
-                    console.log('asdf');
-                    binarytarget = mempointer.toString(2);
-                    binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
-                    mempointer++;
+                    //xconsole.log(variables);
+                    if (!isNaN(variables.get(rightside))) {
+                        //console.log(rightside, variables.get(rightside));
+                        var mem = variables.get(rightside);
+                        binarytarget = mem.toString(2);
+                        binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+                    } else {
+                        variables.set(rightside, mempointer);
+                        binarytarget = mempointer.toString(2);
+                        binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+                        mempointer++;
+                    }
                 }
             }
         } else if (element[0] == '(') {
