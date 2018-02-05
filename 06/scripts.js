@@ -12,7 +12,11 @@ function assemble() {
     var jdict = {
         '': '000', 'JGT': '001', 'JEQ': '010', 'JGE': '011', 'JLT': '100', 'JNE': '101', 'JLE': '110', 'JMP': '111'
     }
-    var reg = new RegExp('^(([ADM]+=(([-!]?[01ADM])|([ADM][-+|&][ADM1])))|([0ADM];J(GT|EQ|GE|LT|NE|LE|MP)))$');
+    var variables = {};
+    var regC = new RegExp('^(([ADM]+=(([-!]?[01ADM])|([ADM][-+|&][ADM1])))|([0ADM];J(GT|EQ|GE|LT|NE|LE|MP)))$');
+    var regA = new RegExp('^\\d+$', 'm');
+    var regR = new RegExp('^R\\d+$')
+    var mempointer = 16;
 
     input = document.getElementById('input').value;
 
@@ -28,12 +32,25 @@ function assemble() {
         binary = Array(13).fill(1);
         binary = binary.concat([0, 0, 0]);
         if (element[0] == '@') {
-            binarytarget = parseInt(element.slice(1, element.length)).toString(2);
-            binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+            rightside = element.slice(1, element.length);
+            if (regA.test(rightside)) {
+                binarytarget = parseInt(rightside).toString(2);
+                binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+            } else {
+                if (regR.test(rightside)) {
+                    binarytarget = parseInt(rightside.slice(1, rightside.length)).toString(2);
+                    binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+                } else {
+                    console.log('asdf');
+                    binarytarget = mempointer.toString(2);
+                    binary = Array(16 - binarytarget.length).fill(0).concat(binarytarget);
+                    mempointer++;
+                }
+            }
         } else if (element[0] == '(') {
             //console.log(element.slice(1, element.length - 1));
         } else {
-            if (reg.test(element)) {
+            if (regC.test(element)) {
                 if (element.includes(';')) {
                     leftside = element.split(';')[0];
                     rightside = element.split(';')[1];
