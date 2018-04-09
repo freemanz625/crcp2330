@@ -1,0 +1,7 @@
+class Random {
+    field int seed;
+    constructor Random new() {
+        let seed = 6969;
+        return this;
+    }
+}

@@ -1,0 +1,7 @@
+class Tetromino {
+    field int type;
+
+    constructor Tetromino new() {
+        
+    }
+}

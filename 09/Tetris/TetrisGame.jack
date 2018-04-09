@@ -1,0 +1,8 @@
+class TetrisGame {
+    field int score;
+
+    constructor TetrisGame new() {
+        let score = 0;
+        return this;
+    }
+}
