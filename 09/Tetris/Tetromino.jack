@@ -1,7 +1,25 @@
 class Tetromino {
-    field int type;
+    field int type, x, y, rotation;
 
-    constructor Tetromino new() {
-        
+    constructor Tetromino new(int seed) {
+        let type = seed;
+        do draw;
+        return this;
+    }
+
+    method void draw() {
+        if(type == 0) {
+            do Screen.setColor(true;
+            do Screen.drawRectangle(x, y, x + 3, y + 3);
+            do Screen.drawRectangle(x+4, y+4, x + 7, y + 7);
+        }
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + 3, y + 3);
+        do Screen.drawRectangle(x+4, y+4, x + 7, y + 7);
+        return;
     }
 }
