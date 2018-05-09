@@ -1,0 +1,251 @@
+class Board {
+    field Array pixels, xes, yes;
+    field int maxrow;
+
+    constructor Board new() {
+        let maxrow = 23;
+        let pixels = Array.new(230);
+        let xes = Array.new(4);
+        let yes = Array.new(4);
+        return this;
+    }
+
+    method void dispose() {
+        do pixels.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method boolean draw(int x, int y, int type, int rotation) {
+        var boolean c;
+        do Screen.setColor(true);
+        do findXY(x, y, type, rotation);
+        let c = check(0);
+        if( c ) {
+            do Screen.drawRectangle(xes[0] * 8, yes[0] * 8, xes[0] * 8 + 6, yes[0] * 8 + 6);
+            do Screen.drawRectangle(xes[1] * 8, yes[1] * 8, xes[1] * 8 + 6, yes[1] * 8 + 6);
+            do Screen.drawRectangle(xes[2] * 8, yes[2] * 8, xes[2] * 8 + 6, yes[2] * 8 + 6);
+            do Screen.drawRectangle(xes[3] * 8, yes[3] * 8, xes[3] * 8 + 6, yes[3] * 8 + 6);
+        }
+        return c;
+    }
+
+    method boolean erase(int x, int y, int type, int rotation) {
+        var boolean c;
+        let c = check(1);
+        do Screen.setColor(false);
+        do findXY(x, y, type, rotation);
+        if( c ) {
+            do Screen.drawRectangle(xes[0] * 8, yes[0] * 8, xes[0] * 8 + 6, yes[0] * 8 + 6);
+            do Screen.drawRectangle(xes[1] * 8, yes[1] * 8, xes[1] * 8 + 6, yes[1] * 8 + 6);
+            do Screen.drawRectangle(xes[2] * 8, yes[2] * 8, xes[2] * 8 + 6, yes[2] * 8 + 6);
+            do Screen.drawRectangle(xes[3] * 8, yes[3] * 8, xes[3] * 8 + 6, yes[3] * 8 + 6);
+        }
+        return c;
+    }
+
+    method boolean check(int type) {
+        var int maxr; 
+        if( type = 1) {
+            let maxr = Math.max(Math.max(yes[0], yes[1]), Math.max(yes[2], yes[3]));
+            if( (yes[0] > 21) | (yes[1] > 21) | (yes[2] > 21) | (yes[3] > 21) ) {
+                return false;
+            }
+            if(pixels[(yes[0] + 1) * 10 + xes[0]] = 1){
+                return false;
+            }
+            if(pixels[(yes[1] + 1) * 10 + xes[1]] = 1){
+                return false;
+            }
+            if(pixels[(yes[2] + 1) * 10 + xes[2]] = 1){
+                return false;
+            }
+            if(pixels[(yes[3] + 1) * 10 + xes[3]] = 1){
+                return false;
+            }
+            // do Output.printInt((yes[3] + 1) * 10 + xes[3]);
+            // do Output.printString("   pls   ");
+            // do Output.printInt(pixels[217]);
+            let pixels[ yes[0] * 10 + xes[0] ] = 0;
+            let pixels[ yes[1] * 10 + xes[1] ] = 0;
+            let pixels[ yes[2] * 10 + xes[2] ] = 0;
+            let pixels[ yes[3] * 10 + xes[3] ] = 0;
+        }
+        if( type = 0) {
+            if( (yes[0] > 22) | (yes[1] > 22) | (yes[2] > 22) | (yes[3] > 22) ) {
+                return false;
+            }
+            let pixels[ yes[0] * 10 + xes[0] ] = 1;
+            let pixels[ yes[1] * 10 + xes[1] ] = 1;
+            let pixels[ yes[2] * 10 + xes[2] ] = 1;
+            let pixels[ yes[3] * 10 + xes[3] ] = 1;
+        }
+
+        return true;
+    }
+
+    method void findXY(int x, int y, int type, int rotation){
+        if(type = 0) {
+            let xes[0] = x;
+            let xes[1] = x + 1;
+            let xes[2] = x;
+            let xes[3] = x + 1;
+            let yes[0] = y;
+            let yes[1] = y;
+            let yes[2] = y + 1;
+            let yes[3] = y + 1;
+        }
+        if( type = 1) {
+            if( (rotation = 0) | (rotation = 2)) {
+                let xes[0] = x;
+                let xes[1] = x;
+                let xes[2] = x;
+                let xes[3] = x;
+                let yes[0] = y;
+                let yes[1] = y + 1;
+                let yes[2] = y + 2;
+                let yes[3] = y + 3;
+            }
+            if( (rotation = 1) | (rotation = 3)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 2;
+                let xes[3] = x + 3;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y;
+                let yes[3] = y;                
+            }
+        }
+        if( type = 2){
+            if( (rotation = 0) | (rotation = 2)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 1;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y + 1;
+                let yes[3] = y + 1;
+            }
+            if( (rotation = 1) | (rotation = 3)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 1;
+                let xes[3] = x;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y - 1;
+                let yes[3] = y + 1;                
+            }
+        }
+        if( type = 3){
+            if( (rotation = 0) | (rotation = 2)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 1;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y - 1;
+                let yes[3] = y - 1;
+            }
+            if( (rotation = 1) | (rotation = 3)) {
+                let xes[0] = x ;
+                let xes[1] = x ;
+                let xes[2] = x + 1;
+                let xes[3] = x + 1;
+                let yes[0] = y;
+                let yes[1] = y + 1;
+                let yes[2] = y + 1;
+                let yes[3] = y + 2;                
+            }
+        }
+        if( type = 4){
+            if( (rotation = 0)) {
+                let xes[0] = x;
+                let xes[1] = x;
+                let xes[2] = x + 1;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y + 1;
+                let yes[2] = y + 1;
+                let yes[3] = y + 1;
+            }
+            if( (rotation = 1)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x;
+                let xes[3] = x;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y + 1;
+                let yes[3] = y + 2;                
+            }
+            if( (rotation = 2)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 2;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y;
+                let yes[3] = y + 1;                
+            }
+            if( (rotation = 3)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 1;
+                let xes[3] = x + 1;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y - 1;
+                let yes[3] = y - 2;                
+            }                        
+        }
+        if( type = 5){
+            if( (rotation = 0)) {
+                let xes[0] = x;
+                let xes[1] = x;
+                let xes[2] = x + 1;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y + 1;
+                let yes[2] = y;
+                let yes[3] = y;
+            }
+            if( (rotation = 1)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 1;
+                let xes[3] = x + 1;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y + 1;
+                let yes[3] = y + 2;                
+            }
+            if( (rotation = 2)) {
+                let xes[0] = x;
+                let xes[1] = x + 1;
+                let xes[2] = x + 2;
+                let xes[3] = x + 2;
+                let yes[0] = y;
+                let yes[1] = y;
+                let yes[2] = y;
+                let yes[3] = y - 1;                
+            }
+            if( (rotation = 3)) {
+                let xes[0] = x;
+                let xes[1] = x;
+                let xes[2] = x;
+                let xes[3] = x + 1;
+                let yes[0] = y;
+                let yes[1] = y + 1;
+                let yes[2] = y + 2;
+                let yes[3] = y + 2;                
+            }                        
+        }
+        return;
+    }
+
+}

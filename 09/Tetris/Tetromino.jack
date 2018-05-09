@@ -1,25 +1,57 @@
 class Tetromino {
-    field int type, x, y, rotation;
+    field int type, x, y, rotation, frame;
+    field boolean success;
+    field Board board;
 
     constructor Tetromino new(int seed) {
+        let success = true;
+        let x = 5;
+        let y = 2;
         let type = seed;
-        do draw;
+        let rotation = 0;
+        let board = Board.new();
         return this;
     }
 
+    method void dispose() {
+        do board.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
     method void draw() {
-        if(type == 0) {
-            do Screen.setColor(true;
-            do Screen.drawRectangle(x, y, x + 3, y + 3);
-            do Screen.drawRectangle(x+4, y+4, x + 7, y + 7);
-        }
+        let success =  board.draw(x, y, type, rotation);
         return;
     }
 
     method void erase() {
-        do Screen.setColor(false);
-        do Screen.drawRectangle(x, y, x + 3, y + 3);
-        do Screen.drawRectangle(x+4, y+4, x + 7, y + 7);
+        let success = board.erase(x, y, type, rotation);
+        return;
+    }
+
+    method boolean tick(int direction) {
+        do erase();
+        if ( (x > 0)  & (direction = 0)) {
+            let x = x - 1;
+        }
+        if( (x < 9) & (direction = 1)) {
+            let x = x + 1;
+        }
+        let y = y + 1;
+        let frame = frame + 1;
+        do draw();
+        return success;
+    }
+
+    method void rotate() {
+        do erase();
+        if( rotation < 4) {
+            let rotation = rotation + 1;
+        }
+        if( (rotation = 4) ) {
+            let rotation = 0;
+        }
+        do draw();
         return;
     }
 }
